@@ -2,10 +2,12 @@
   "name": "a2z-chat",
   "version": "1.0.0",
   "description": "A modern, real-time chat room application with WhatsApp-like interface and professional design",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "echo 'No build step required'",
+    "vercel-build": "echo 'Build complete'"
   },
   "keywords": [
     "chat",

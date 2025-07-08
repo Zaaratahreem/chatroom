@@ -6,6 +6,7 @@
     // Application state
     const app = document.querySelector(".app");
     const socket = io({
+        path: '/api/socket',
         transports: ['websocket', 'polling'],
         timeout: 5000,
         reconnection: true,
