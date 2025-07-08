@@ -1,0 +1,40 @@
+{
+  "name": "a2z-chat",
+  "version": "1.0.0",
+  "description": "A modern, real-time chat room application with WhatsApp-like interface and professional design",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "chat",
+    "real-time",
+    "socket.io",
+    "whatsapp",
+    "messaging",
+    "websocket",
+    "nodejs",
+    "express"
+  ],
+  "author": "Zaara Tahreem",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/a2z-chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/a2z-chat/issues"
+  },
+  "homepage": "https://github.com/your-username/a2z-chat#readme"
+}

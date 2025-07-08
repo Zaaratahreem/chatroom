@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2Z Chat - Real-time Chat Room</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Join A2Z Chat - A modern real-time chat room application">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+</head>
+
+<body>
+    <div class="app">
+        <!-- Join Screen -->
+        <div class="join-screen active" id="join-screen">
+            <div class="join-background">
+                <div class="floating-shapes">
+                    <div class="shape shape-1"></div>
+                    <div class="shape shape-2"></div>
+                    <div class="shape shape-3"></div>
+                    <div class="shape shape-4"></div>
+                </div>
+            </div>
+            <div class="form-container">
+                <div class="form">
+                    <div class="logo-section">
+                        <div class="logo-icon">
+                            <div class="icon-particles">
+                                <div class="particle particle-1"></div>
+                                <div class="particle particle-2"></div>
+                                <div class="particle particle-3"></div>
+                                <div class="particle particle-4"></div>
+                                <div class="particle particle-5"></div>
+                                <div class="particle particle-6"></div>
+                            </div>
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h1>A2Z Chat</h1>
+                        <p>Connect, Chat, Share</p>
+                        <p class="made-by">Made by Zaara Tahreem with ❤️</p>
+                    </div>
+                    <div class="form-input">
+                        <label for="username">
+                            <i class="fas fa-user"></i>
+                            Enter your username
+                        </label>
+                        <input type="text" id="username" placeholder="Your username" maxlength="20" required>
+                        <div class="input-border"></div>
+                    </div>
+                    <button type="button" id="join-user">
+                        <i class="fas fa-rocket"></i>
+                        <span>Join Chat</span>
+                    </button>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-bolt"></i>
+                            <span>Real-time messaging</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-users"></i>
+                            <span>Multiple users</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Mobile responsive</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div class="chat-screen" id="chat-screen">
+            <div class="chat-header">
+                <div class="header-left">
+                    <div class="logo-small">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="chat-info">
+                        <h3>A2Z Chat</h3>
+                        <span id="user-count">0 users online</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button id="share-button" class="action-button" title="Share chat">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button id="toggle-theme" class="action-button" title="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="toggle-sound" class="action-button" title="Toggle sound">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <button id="exit-chat" class="action-button exit-button" title="Exit chat">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="chat-body">
+                <div class="messages" id="messages"></div>
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                    <span class="typing-text"></span>
+                </div>
+            </div>
+            
+            <div class="chat-footer">
+                <div class="input-container">
+                    <div class="typebox">
+                        <button id="emoji-button" class="emoji-button" title="Add emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                        <input type="text" id="message-input" placeholder="Type your message..." maxlength="500">
+                        <button id="attach-button" class="attach-button" title="Attach file">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button id="send-message" class="send-button" title="Send message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emoji Picker -->
+    <div class="emoji-picker" id="emoji-picker">
+        <div class="emoji-header">
+            <span>Choose an emoji</span>
+        </div>
+        <div class="emoji-grid">
+            <span class="emoji-option">😀</span>
+            <span class="emoji-option">😂</span>
+            <span class="emoji-option">🤣</span>
+            <span class="emoji-option">😊</span>
+            <span class="emoji-option">😍</span>
+            <span class="emoji-option">🤔</span>
+            <span class="emoji-option">😎</span>
+            <span class="emoji-option">😴</span>
+            <span class="emoji-option">🙄</span>
+            <span class="emoji-option">😭</span>
+            <span class="emoji-option">😱</span>
+            <span class="emoji-option">🤯</span>
+            <span class="emoji-option">👍</span>
+            <span class="emoji-option">👎</span>
+            <span class="emoji-option">🔥</span>
+            <span class="emoji-option">💯</span>
+            <span class="emoji-option">❤️</span>
+            <span class="emoji-option">💙</span>
+            <span class="emoji-option">💚</span>
+            <span class="emoji-option">💛</span>
+            <span class="emoji-option">🎉</span>
+            <span class="emoji-option">🚀</span>
+            <span class="emoji-option">⭐</span>
+            <span class="emoji-option">✨</span>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">Connecting to A2Z Chat...</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="code.js"></script>
+</body>
+
+</html>
