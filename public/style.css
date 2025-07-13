@@ -1,0 +1,270 @@
+﻿/* A2Z Chat - Professional Minimal Design */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #1e293b;
+    background-color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 64px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-link {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.nav-link:hover {
+    color: #3b82f6;
+    background-color: #dbeafe;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-screen {
+    padding: 48px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.hero-section {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: #64748b;
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.welcome-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.option-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.option-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+}
+
+.option-icon {
+    font-size: 3rem;
+    color: #3b82f6;
+    margin-bottom: 16px;
+}
+
+.option-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1e293b;
+}
+
+.option-description {
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+.option-btn {
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.option-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.join-screen {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 32px;
+}
+
+.form-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 24px;
+    color: #1e293b;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #1e293b;
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #ffffff;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.back-btn {
+    color: #64748b;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.back-btn:hover {
+    color: #3b82f6;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .welcome-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-menu {
+        gap: 16px;
+    }
+    
+    .landing-screen {
+        padding: 24px 16px;
+    }
+}
