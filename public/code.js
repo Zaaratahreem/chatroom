@@ -1,11 +1,14 @@
 (function() {
   const app = document.querySelector(".app");
   
-  // Initialize Socket.IO with better error handling
+  // Initialize Socket.IO with Vercel-compatible configuration
   const socket = io({
-    transports: ['websocket', 'polling'],
+    transports: ['polling'], // Use polling only for Vercel compatibility
+    upgrade: false,
+    rememberUpgrade: false,
     timeout: 20000,
-    forceNew: true
+    forceNew: true,
+    autoConnect: true
   });
   
   let uname;
@@ -14,22 +17,66 @@
   // Connection status handling
   socket.on('connect', function() {
     isConnected = true;
-    console.log('Connected to server');
+    console.log('Connected to server via polling');
     // Remove any connection error messages
     const errorMessages = app.querySelectorAll('.connection-error');
     errorMessages.forEach(msg => msg.remove());
+    
+    // Show connection status
+    showConnectionStatus('Connected', 'success');
   });
 
   socket.on('disconnect', function() {
     isConnected = false;
     console.log('Disconnected from server');
     renderMessage("update", "Connection lost. Trying to reconnect...");
+    showConnectionStatus('Disconnected', 'error');
   });
 
   socket.on('connect_error', function(error) {
     console.error('Connection error:', error);
     renderMessage("update", "Connection error. Please check your internet connection.");
+    showConnectionStatus('Connection Error', 'error');
   });
+
+  socket.on('reconnect', function() {
+    console.log('Reconnected to server');
+    renderMessage("update", "Reconnected to chat");
+    showConnectionStatus('Reconnected', 'success');
+  });
+
+  // Show connection status
+  function showConnectionStatus(status, type) {
+    let statusEl = document.querySelector('.connection-status');
+    if (!statusEl) {
+      statusEl = document.createElement('div');
+      statusEl.className = 'connection-status';
+      statusEl.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      `;
+      document.body.appendChild(statusEl);
+    }
+    
+    statusEl.textContent = status;
+    statusEl.style.backgroundColor = type === 'success' ? '#10b981' : '#ef4444';
+    statusEl.style.color = 'white';
+    
+    if (type === 'success') {
+      setTimeout(() => {
+        if (statusEl) {
+          statusEl.style.opacity = '0';
+          setTimeout(() => statusEl.remove(), 300);
+        }
+      }, 2000);
+    }
+  }
 
   // Event listener for joining the chat
   app.querySelector(".join-screen #join-user").addEventListener("click", function () {

@@ -9,6 +9,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+server.js
 
 # IDE files
 .vscode/
@@ -28,10 +29,6 @@ Thumbs.db
 # Git
 .git/
 .gitignore
-
-# README and docs (optional, remove if you want to include them)
-README.md
-*.md
 
 # Package management
 package-lock.json

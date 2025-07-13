@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChatHive - Real-time chat application for instant messaging">
+    <meta name="keywords" content="chat, messaging, real-time, communication">
+    <title>ChatHive - Real-time Chat</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/public/style.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" as="style">
+    
+    <link rel="stylesheet" type="text/css" href="/public/style.css">
+    
+    <!-- Optimized font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" rel="stylesheet">
+    
+    <!-- Favicon and PWA meta tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+
+<body>
+    <div class="app">
+        <div class="screen join-screen active">
+            <div class="form">
+                <h1>Join ChatHive</h1>
+                <div class="form-input">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" maxlength="20" placeholder="Enter your username" autocomplete="username" required>
+                </div>
+                <div class="form-input">
+                    <button id="join-user" type="button">Join Chat</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="screen chat-screen">
+            <div class="header">
+                <div class="logo">ChatHive</div>
+                <button id="exit-chat" type="button" aria-label="Exit chat">Exit</button>
+            </div>
+            
+            <div class="messages" role="log" aria-live="polite" aria-label="Chat messages">
+                <!-- Messages will be dynamically added here -->
+            </div>
+            
+            <div class="typebox">
+                <input type="text" 
+                       id="message-input" 
+                       placeholder="Type a message..." 
+                       maxlength="500"
+                       autocomplete="off"
+                       aria-label="Message input">
+                <button id="send-message" type="button" aria-label="Send message">Send</button>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Load Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/public/code.js"></script>
+</body>
+
+</html>

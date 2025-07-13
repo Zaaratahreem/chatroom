@@ -1,8 +1,8 @@
 {
   "name": "chatroom",
   "version": "1.0.0",
-  "description": "Real-time chat application with Socket.IO",
-  "main": "server.js",
+  "description": "Real-time chat application with Socket.IO optimized for Vercel",
+  "main": "api/socket.js",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -13,9 +13,11 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "build": "echo 'No build step required'",
+    "vercel-build": "echo 'Build complete'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["chat", "realtime", "socket.io", "express"],
+  "keywords": ["chat", "realtime", "socket.io", "express", "vercel"],
   "author": "",
   "license": "ISC"
 }

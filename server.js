@@ -5,16 +5,22 @@ const { createServer } = require("http");
 const app = express();
 const server = createServer(app);
 
-// Configure Socket.IO with CORS for Vercel
+// Configure Socket.IO
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"]
-  }
+  },
+  transports: ['polling', 'websocket']
 });
 
-// Serve static files
-app.use(express.static(path.join(__dirname, "public")));
+// Serve static files from public directory
+app.use('/public', express.static(path.join(__dirname, "public")));
+
+// Serve index.html at root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Socket.IO connection handling
 io.on("connection", function(socket) {
@@ -46,6 +52,7 @@ app.get("/health", (req, res) => {
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Local: http://localhost:${PORT}`);
 });
 
 module.exports = app;
