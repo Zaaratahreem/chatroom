@@ -1,72 +1,131 @@
-const { Server } = require('socket.io');
-const express = require('express');
-const { createServer } = require('http');
-const path = require('path');
+// Simple polling-based chat server for Vercel
+let messages = [];
+let users = new Set();
 
-let io;
-let httpServer;
-
-function initializeServer() {
-  if (!httpServer) {
-    const app = express();
-    httpServer = createServer(app);
-    
-    // Configure Socket.IO with polling transport for Vercel compatibility
-    io = new Server(httpServer, {
-      cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-      },
-      transports: ['polling'],
-      allowEIO3: true
-    });
-
-    // Socket.IO connection handling
-    io.on('connection', (socket) => {
-      console.log('User connected:', socket.id);
-      
-      socket.on('newuser', (username) => {
-        socket.broadcast.emit('update', username + ' joined the conversation');
-      });
-      
-      socket.on('exituser', (username) => {
-        socket.broadcast.emit('update', username + ' left the conversation');
-      });
-      
-      socket.on('chat', (message) => {
-        socket.broadcast.emit('chat', message);
-      });
-      
-      socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
-      });
-    });
+// Clean up old messages (keep last 50)
+function cleanupMessages() {
+  if (messages.length > 50) {
+    messages = messages.slice(-50);
   }
-  return { io, httpServer };
 }
 
 module.exports = (req, res) => {
-  // Initialize server on first request
-  const { io: socketIO } = initializeServer();
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // Handle Socket.IO requests
-  if (req.url.startsWith('/socket.io/')) {
-    return socketIO.engine.handleRequest(req, res);
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const pathname = url.pathname;
+  
+  // Handle different endpoints
+  if (pathname === '/api/join') {
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        try {
+          const { username } = JSON.parse(body);
+          users.add(username);
+          messages.push({
+            type: 'update',
+            text: `${username} joined the conversation`,
+            timestamp: Date.now()
+          });
+          cleanupMessages();
+          res.status(200).json({ success: true });
+        } catch (error) {
+          res.status(400).json({ error: 'Invalid request' });
+        }
+      });
+    } else {
+      res.status(405).json({ error: 'Method not allowed' });
+    }
   }
   
-  // Health check
-  if (req.url === '/health' || req.url === '/api/health') {
+  else if (pathname === '/api/leave') {
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        try {
+          const { username } = JSON.parse(body);
+          users.delete(username);
+          messages.push({
+            type: 'update',
+            text: `${username} left the conversation`,
+            timestamp: Date.now()
+          });
+          cleanupMessages();
+          res.status(200).json({ success: true });
+        } catch (error) {
+          res.status(400).json({ error: 'Invalid request' });
+        }
+      });
+    } else {
+      res.status(405).json({ error: 'Method not allowed' });
+    }
+  }
+  
+  else if (pathname === '/api/message') {
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        try {
+          const { username, text, time } = JSON.parse(body);
+          messages.push({
+            type: 'chat',
+            username,
+            text,
+            time,
+            timestamp: Date.now()
+          });
+          cleanupMessages();
+          res.status(200).json({ success: true });
+        } catch (error) {
+          res.status(400).json({ error: 'Invalid request' });
+        }
+      });
+    } else {
+      res.status(405).json({ error: 'Method not allowed' });
+    }
+  }
+  
+  else if (pathname === '/api/messages') {
+    if (req.method === 'GET') {
+      const since = parseInt(url.searchParams.get('since')) || 0;
+      const newMessages = messages.filter(msg => msg.timestamp > since);
+      res.status(200).json({ 
+        messages: newMessages,
+        timestamp: Date.now()
+      });
+    } else {
+      res.status(405).json({ error: 'Method not allowed' });
+    }
+  }
+  
+  else if (pathname === '/api/health') {
     res.status(200).json({ 
       status: 'OK', 
       timestamp: new Date().toISOString(),
-      transport: 'polling'
+      activeUsers: users.size,
+      messageCount: messages.length
     });
-    return;
   }
   
-  // Default response
-  res.status(200).json({ 
-    message: 'Socket.IO server running',
-    endpoint: '/socket.io/'
-  });
+  else {
+    res.status(404).json({ error: 'Endpoint not found' });
+  }
 };

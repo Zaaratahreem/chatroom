@@ -1,49 +1,51 @@
 (function() {
   const app = document.querySelector(".app");
   
-  // Initialize Socket.IO with Vercel-compatible configuration
-  const socket = io({
-    transports: ['polling'], // Use polling only for Vercel compatibility
-    upgrade: false,
-    rememberUpgrade: false,
-    timeout: 20000,
-    forceNew: true,
-    autoConnect: true
-  });
-  
   let uname;
   let isConnected = false;
+  let lastMessageTimestamp = 0;
+  let pollInterval;
 
-  // Connection status handling
-  socket.on('connect', function() {
-    isConnected = true;
-    console.log('Connected to server via polling');
-    // Remove any connection error messages
-    const errorMessages = app.querySelectorAll('.connection-error');
-    errorMessages.forEach(msg => msg.remove());
+  // Polling-based chat client for Vercel compatibility
+  function startPolling() {
+    if (pollInterval) return;
     
-    // Show connection status
-    showConnectionStatus('Connected', 'success');
-  });
+    pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/messages?since=${lastMessageTimestamp}`);
+        const data = await response.json();
+        
+        if (data.messages && data.messages.length > 0) {
+          data.messages.forEach(message => {
+            if (message.type === 'chat') {
+              renderMessage("other", message);
+            } else if (message.type === 'update') {
+              renderMessage("update", message.text);
+            }
+          });
+          lastMessageTimestamp = data.timestamp;
+        }
+        
+        if (!isConnected) {
+          isConnected = true;
+          showConnectionStatus('Connected', 'success');
+        }
+      } catch (error) {
+        console.error('Polling error:', error);
+        if (isConnected) {
+          isConnected = false;
+          showConnectionStatus('Connection Error', 'error');
+        }
+      }
+    }, 1000); // Poll every second
+  }
 
-  socket.on('disconnect', function() {
-    isConnected = false;
-    console.log('Disconnected from server');
-    renderMessage("update", "Connection lost. Trying to reconnect...");
-    showConnectionStatus('Disconnected', 'error');
-  });
-
-  socket.on('connect_error', function(error) {
-    console.error('Connection error:', error);
-    renderMessage("update", "Connection error. Please check your internet connection.");
-    showConnectionStatus('Connection Error', 'error');
-  });
-
-  socket.on('reconnect', function() {
-    console.log('Reconnected to server');
-    renderMessage("update", "Reconnected to chat");
-    showConnectionStatus('Reconnected', 'success');
-  });
+  function stopPolling() {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+    }
+  }
 
   // Show connection status
   function showConnectionStatus(status, type) {
@@ -78,8 +80,30 @@
     }
   }
 
+  // API helper functions
+  async function apiCall(endpoint, data = null) {
+    const options = {
+      method: data ? 'POST' : 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+    
+    try {
+      const response = await fetch(endpoint, options);
+      return await response.json();
+    } catch (error) {
+      console.error('API call failed:', error);
+      throw error;
+    }
+  }
+
   // Event listener for joining the chat
-  app.querySelector(".join-screen #join-user").addEventListener("click", function () {
+  app.querySelector(".join-screen #join-user").addEventListener("click", async function () {
       let username = app.querySelector(".join-screen #username").value.trim();
       if (username.length == 0) {
           alert("Please enter a username");
@@ -90,19 +114,21 @@
           return;
       }
       
-      if (!isConnected) {
-          alert("Not connected to server. Please wait and try again.");
-          return;
-      }
-      
-      socket.emit("newuser", username);
-      uname = username;
+      try {
+        await apiCall('/api/join', { username });
+        uname = username;
 
-      app.querySelector(".join-screen").classList.remove("active");
-      app.querySelector(".chat-screen").classList.add("active");
-      
-      // Focus on message input
-      app.querySelector(".chat-screen #message-input").focus();
+        app.querySelector(".join-screen").classList.remove("active");
+        app.querySelector(".chat-screen").classList.add("active");
+        
+        // Start polling for messages
+        startPolling();
+        
+        // Focus on message input
+        app.querySelector(".chat-screen #message-input").focus();
+      } catch (error) {
+        alert("Failed to join chat. Please try again.");
+      }
   });
 
   // Event listener for Enter key in username input
@@ -124,7 +150,7 @@
       }
   });
 
-  function sendMessage() {
+  async function sendMessage() {
       let messageInput = app.querySelector(".chat-screen #message-input");
       let message = messageInput.value.trim();
       
@@ -132,36 +158,33 @@
           return;
       }
       
-      if (!isConnected) {
-          alert("Not connected to server. Message not sent.");
-          return;
-      }
-      
       let timestamp = new Date().toLocaleTimeString();
+      let messageData = { username: uname, text: message, time: timestamp };
 
-      renderMessage("my", { username: uname, text: message, time: timestamp });
+      // Show message immediately
+      renderMessage("my", messageData);
 
-      socket.emit("chat", { username: uname, text: message, time: timestamp });
-
-      messageInput.value = "";
-      messageInput.focus();
+      try {
+        await apiCall('/api/message', messageData);
+        messageInput.value = "";
+        messageInput.focus();
+      } catch (error) {
+        alert("Failed to send message. Please try again.");
+      }
   }
 
   // Event listener for exiting the chat
-  app.querySelector(".chat-screen #exit-chat").addEventListener("click", function () {
+  app.querySelector(".chat-screen #exit-chat").addEventListener("click", async function () {
       if (confirm("Are you sure you want to leave the chat?")) {
-          socket.emit("exituser", uname);
+          try {
+            await apiCall('/api/leave', { username: uname });
+          } catch (error) {
+            console.error('Failed to notify server of exit:', error);
+          }
+          
+          stopPolling();
           window.location.reload();
       }
-  });
-
-  // Listen for incoming messages from other users
-  socket.on("update", function(update) { 
-      renderMessage("update", update);
-  });
-  
-  socket.on("chat", function(message) { 
-      renderMessage("other", message);
   });
 
   // Render a message to the chat screen
@@ -211,5 +234,10 @@
       div.textContent = text;
       return div.innerHTML;
   }
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+      stopPolling();
+  });
 })();
 

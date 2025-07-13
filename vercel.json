@@ -6,22 +6,30 @@
       "use": "@vercel/node"
     },
     {
-      "src": "public/**/*",
+      "src": "public/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "index.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/socket.io/(.*)",
-      "dest": "/api/socket.js"
-    },
-    {
       "src": "/api/(.*)",
       "dest": "/api/socket.js"
     },
     {
-      "src": "/(.*)",
+      "src": "/public/(.*)",
       "dest": "/public/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ],
   "functions": {
