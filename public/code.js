@@ -18,8 +18,12 @@
     if (urlRoomId) {
       roomId = urlRoomId;
       showScreen('join');
-      const roomInput = document.getElementById('roomInput');
-      if (roomInput) roomInput.value = roomId;
+      const roomIdText = document.getElementById('room-id-text');
+      if (roomIdText) {
+        roomIdText.textContent = roomId;
+        const roomInfo = document.getElementById('room-info');
+        if (roomInfo) roomInfo.style.display = 'block';
+      }
     } else {
       showScreen('landing');
     }
@@ -248,15 +252,15 @@
 
   // Update chat header
   function updateChatHeader() {
-    const chatTitle = document.querySelector('.chat-title');
-    const chatStatus = document.querySelector('.chat-status');
+    const chatTitle = document.querySelector('.chat-title span');
+    const statusText = document.getElementById('status-text');
     
     if (chatTitle) {
-      chatTitle.innerHTML = `<i class="fas fa-users"></i> A2Z Chat - ${roomId}`;
+      chatTitle.textContent = `A2Z Chat - ${roomId}`;
     }
     
-    if (chatStatus) {
-      chatStatus.innerHTML = `<i class="fas fa-circle status-dot"></i> Connected`;
+    if (statusText) {
+      statusText.textContent = 'Connected';
     }
   }
 
