@@ -1,15 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/socket.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
+  "functions": {
+    "api/*.js": {
+      "memory": 512,
+      "maxDuration": 10
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/(.*)",
@@ -27,10 +23,5 @@
       "src": "/(.*)",
       "dest": "/public/index.html"
     }
-  ],
-  "functions": {
-    "api/socket.js": {
-      "maxDuration": 10
-    }
-  }
+  ]
 }
