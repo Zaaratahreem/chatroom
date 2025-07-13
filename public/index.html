@@ -21,34 +21,71 @@
 
 <body>
     <div class="app">
+        <!-- App Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-comments"></i>
+                    <span>A2Z Chat</span>
+                </div>
+                <nav class="nav-menu" id="nav-menu">
+                    <button class="nav-item" id="nav-home">Home</button>
+                    <button class="nav-item" id="nav-join">Join</button>
+                    <button class="nav-item" id="nav-create">Create</button>
+                </nav>
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
         <!-- Landing Screen -->
         <div class="screen landing-screen active">
             <div class="container">
-                <div class="brand">
-                    <h1>A2Z Chat</h1>
-                    <p>Clean, simple messaging</p>
+                <div class="hero">
+                    <h1>Welcome to A2Z Chat</h1>
+                    <p>Connect instantly with anyone, anywhere. Simple, secure, and fast messaging.</p>
                 </div>
                 
-                <button id="start-chatting" class="btn btn-primary">
-                    Get Started
-                </button>
+                <div class="actions">
+                    <button id="start-chatting" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Get Started
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Welcome Screen -->
         <div class="screen welcome-screen">
             <div class="container">
-                <div class="header">
-                    <h2>Welcome</h2>
+                <div class="welcome-content">
+                    <h2>Choose an Option</h2>
+                    <p>Create a new chat room or join an existing one</p>
                 </div>
                 
                 <div class="options">
-                    <button id="create-room" class="btn btn-primary">
-                        Create Room
-                    </button>
-                    <button id="join-existing" class="btn btn-secondary">
-                        Join Room
-                    </button>
+                    <div class="option-card">
+                        <div class="option-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <h3>Create New Room</h3>
+                        <p>Start a new conversation and invite others</p>
+                        <button id="create-room" class="btn btn-primary">
+                            Create Room
+                        </button>
+                    </div>
+                    
+                    <div class="option-card">
+                        <div class="option-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <h3>Join Existing Room</h3>
+                        <p>Enter with an invitation link</p>
+                        <button id="join-existing" class="btn btn-secondary">
+                            Join Room
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -56,27 +93,35 @@
         <!-- Join Screen -->
         <div class="screen join-screen">
             <div class="container">
-                <div class="header">
-                    <button id="back-to-welcome" class="btn-back">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <h2>Join Chat</h2>
+                <div class="form-header">
+                    <h2>Join Conversation</h2>
+                    <p>Enter your name to start chatting</p>
                 </div>
                 
                 <div class="form">
-                    <input type="text" id="username" placeholder="Your name" maxlength="20" required>
+                    <div class="input-group">
+                        <label for="username">Your Name</label>
+                        <input type="text" id="username" placeholder="Enter your name" maxlength="20" required>
+                    </div>
                     
                     <div class="room-info" id="room-info" style="display: none;">
-                        <div class="room-id-display">
-                            <span>Room ID: </span>
-                            <span id="room-id-text"></span>
-                            <button id="copy-room-id" class="btn-copy">
-                                <i class="fas fa-copy"></i>
-                            </button>
+                        <div class="info-card">
+                            <div class="info-header">
+                                <i class="fas fa-users"></i>
+                                <span>Room Information</span>
+                            </div>
+                            <div class="room-details">
+                                <span class="label">Room ID:</span>
+                                <span id="room-id-text" class="room-id"></span>
+                                <button id="copy-room-id" class="btn-copy" title="Copy Room ID">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
-                    <button id="join-chat" class="btn btn-primary">
+                    <button id="join-chat" class="btn btn-primary btn-large">
+                        <i class="fas fa-sign-in-alt"></i>
                         Join Chat
                     </button>
                 </div>
@@ -86,18 +131,23 @@
         <!-- Chat Screen -->
         <div class="screen chat-screen">
             <div class="chat-header">
-                <button id="back-to-join" class="btn-back">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <div class="chat-title">
-                    <span>A2Z Chat</span>
-                    <small id="status-text">Connected</small>
+                <div class="chat-info">
+                    <div class="chat-avatar">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="chat-details">
+                        <h3>Chat Room</h3>
+                        <span id="status-text" class="status">Connected</span>
+                    </div>
                 </div>
                 <div class="chat-actions">
-                    <button id="share-room" class="btn-icon">
-                        <i class="fas fa-share"></i>
+                    <button id="share-room" class="btn-icon" title="Share Room">
+                        <i class="fas fa-share-alt"></i>
                     </button>
-                    <button id="exit-chat" class="btn-icon">
+                    <button id="chat-menu" class="btn-icon" title="Menu">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <button id="exit-chat" class="btn-icon exit-btn" title="Leave Chat">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
@@ -105,29 +155,58 @@
             
             <div class="messages-container">
                 <div class="messages" id="messages-area">
-                    <div class="welcome-message">
-                        <h3>Welcome!</h3>
-                        <p>Share this link to invite others:</p>
-                        <div class="share-link">
-                            <input type="text" id="share-link" readonly>
-                            <button id="copy-link" class="btn-copy">
-                                Copy
-                            </button>
+                    <div class="system-message">
+                        <div class="system-content">
+                            <div class="system-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="system-text">
+                                <h4>Room Created Successfully!</h4>
+                                <p>Invite others by sharing the room link below.</p>
+                            </div>
+                        </div>
+                        <div class="invite-section">
+                            <div class="invite-header">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Invite People</span>
+                            </div>
+                            <div class="invite-actions">
+                                <div class="link-display">
+                                    <input type="text" id="share-link" readonly placeholder="Room link will appear here">
+                                    <button id="copy-link" class="btn-copy" title="Copy Link">
+                                        <i class="fas fa-copy"></i>
+                                        <span>Copy</span>
+                                    </button>
+                                </div>
+                                <button id="share-direct" class="btn btn-secondary btn-small">
+                                    <i class="fas fa-share"></i>
+                                    Share
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="message-input">
-                <input type="text" id="message-input" placeholder="Type a message..." maxlength="1000">
-                <button id="send-message" class="btn-send">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+            <div class="message-input-container">
+                <div class="input-wrapper">
+                    <button class="btn-attachment" title="Attach file">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input type="text" id="message-input" placeholder="Type your message..." maxlength="1000">
+                    <button class="btn-emoji" title="Add emoji">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <button id="send-message" class="btn-send" title="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
         
         <!-- Share Modal -->
         <div class="modal" id="share-modal">
+            <div class="modal-backdrop"></div>
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Share Chat Room</h3>
@@ -136,12 +215,35 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Share this link:</p>
-                    <div class="share-link">
-                        <input type="text" id="modal-share-link" readonly>
-                        <button id="modal-copy-link" class="btn btn-primary">
-                            Copy
-                        </button>
+                    <div class="share-options">
+                        <div class="share-method">
+                            <h4>Share Link</h4>
+                            <div class="link-container">
+                                <input type="text" id="modal-share-link" readonly>
+                                <button id="modal-copy-link" class="btn btn-primary">
+                                    <i class="fas fa-copy"></i>
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="share-method">
+                            <h4>Quick Share</h4>
+                            <div class="share-buttons">
+                                <button class="share-btn whatsapp" data-platform="whatsapp">
+                                    <i class="fab fa-whatsapp"></i>
+                                    WhatsApp
+                                </button>
+                                <button class="share-btn email" data-platform="email">
+                                    <i class="fas fa-envelope"></i>
+                                    Email
+                                </button>
+                                <button class="share-btn telegram" data-platform="telegram">
+                                    <i class="fab fa-telegram"></i>
+                                    Telegram
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
