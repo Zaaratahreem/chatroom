@@ -7,7 +7,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.2"
   },
   "scripts": {
     "start": "node server.js",
@@ -16,7 +16,13 @@
     "vercel-build": "echo 'Build complete'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["chat", "realtime", "socket.io", "express", "vercel"],
+  "keywords": [
+    "chat",
+    "realtime",
+    "socket.io",
+    "express",
+    "vercel"
+  ],
   "author": "",
   "license": "ISC"
 }
