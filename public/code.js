@@ -9,6 +9,8 @@
 
   // Initialize app
   function init() {
+    console.log('Initializing A2Z Chat...');
+    
     // Check if there's a room ID in the URL
     const urlParams = new URLSearchParams(window.location.search);
     const urlRoomId = urlParams.get('room');
@@ -19,7 +21,7 @@
       const roomInput = document.getElementById('roomInput');
       if (roomInput) roomInput.value = roomId;
     } else {
-      showScreen('welcome');
+      showScreen('landing');
     }
     
     attachEventListeners();
@@ -30,7 +32,7 @@
     const screens = document.querySelectorAll('.screen');
     screens.forEach(screen => screen.classList.remove('active'));
     
-    const targetScreen = document.getElementById(`${screenName}Screen`);
+    const targetScreen = document.querySelector(`.${screenName}-screen`);
     if (targetScreen) {
       targetScreen.classList.add('active');
       currentScreen = screenName;
@@ -49,32 +51,55 @@
 
   // Attach event listeners
   function attachEventListeners() {
+    // Landing screen button
+    const startChattingBtn = document.getElementById('start-chatting');
+    
+    if (startChattingBtn) {
+      startChattingBtn.addEventListener('click', () => {
+        console.log('Start chatting clicked');
+        showScreen('welcome');
+      });
+    }
+
     // Welcome screen buttons
-    const createRoomBtn = document.getElementById('createRoom');
-    const joinRoomBtn = document.getElementById('joinRoom');
+    const createRoomBtn = document.getElementById('create-room');
+    const joinRoomBtn = document.getElementById('join-existing');
     
     if (createRoomBtn) {
       createRoomBtn.addEventListener('click', () => {
+        console.log('Create room clicked');
         roomId = generateRoomId();
-        const roomInput = document.getElementById('roomInput');
-        if (roomInput) roomInput.value = roomId;
+        const roomIdText = document.getElementById('room-id-text');
+        if (roomIdText) {
+          roomIdText.textContent = roomId;
+          const roomInfo = document.getElementById('room-info');
+          if (roomInfo) roomInfo.style.display = 'block';
+        }
         showScreen('join');
       });
     }
     
     if (joinRoomBtn) {
       joinRoomBtn.addEventListener('click', () => {
+        console.log('Join existing clicked');
+        const roomInfo = document.getElementById('room-info');
+        if (roomInfo) roomInfo.style.display = 'none';
         showScreen('join');
       });
     }
 
     // Join screen
-    const backToWelcome = document.getElementById('backToWelcome');
-    const joinButton = document.getElementById('joinButton');
+    const backToWelcome = document.getElementById('back-to-welcome');
+    const joinButton = document.getElementById('join-chat');
+    const copyRoomIdBtn = document.getElementById('copy-room-id');
     
     if (backToWelcome) {
       backToWelcome.addEventListener('click', () => {
+        console.log('Back to welcome clicked');
         showScreen('welcome');
+        const roomInfo = document.getElementById('room-info');
+        if (roomInfo) roomInfo.style.display = 'none';
+        roomId = null;
       });
     }
     
@@ -82,19 +107,36 @@
       joinButton.addEventListener('click', handleJoinRoom);
     }
     
-    // Join form submission
-    const joinForm = document.getElementById('joinForm');
-    if (joinForm) {
-      joinForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handleJoinRoom();
+    if (copyRoomIdBtn) {
+      copyRoomIdBtn.addEventListener('click', async () => {
+        const roomIdText = document.getElementById('room-id-text');
+        if (roomIdText && roomIdText.textContent) {
+          try {
+            await navigator.clipboard.writeText(roomIdText.textContent);
+            showNotification('Room ID copied to clipboard!', 'success');
+          } catch (err) {
+            const textArea = document.createElement('textarea');
+            textArea.value = roomIdText.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showNotification('Room ID copied to clipboard!', 'success');
+          }
+        }
       });
     }
 
     // Chat screen
-    const exitChatBtn = document.getElementById('exitChat');
-    const shareRoomBtn = document.getElementById('shareRoom');
-    const messageForm = document.getElementById('messageForm');
+    const backToJoin = document.getElementById('back-to-join');
+    const exitChatBtn = document.getElementById('exit-chat');
+    const shareRoomBtn = document.getElementById('share-room');
+    const sendMessageBtn = document.getElementById('send-message');
+    const messageInput = document.getElementById('message-input');
+    
+    if (backToJoin) {
+      backToJoin.addEventListener('click', handleExitChat);
+    }
     
     if (exitChatBtn) {
       exitChatBtn.addEventListener('click', handleExitChat);
@@ -104,16 +146,21 @@
       shareRoomBtn.addEventListener('click', openShareModal);
     }
     
-    if (messageForm) {
-      messageForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handleSendMessage();
+    if (sendMessageBtn) {
+      sendMessageBtn.addEventListener('click', handleSendMessage);
+    }
+    
+    if (messageInput) {
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          handleSendMessage();
+        }
       });
     }
 
     // Modal controls
-    const closeModal = document.getElementById('closeModal');
-    const copyShareLink = document.getElementById('copyShareLink');
+    const closeModal = document.getElementById('close-share-modal');
+    const copyShareLink = document.getElementById('modal-copy-link');
     
     if (closeModal) {
       closeModal.addEventListener('click', closeShareModal);
@@ -123,33 +170,30 @@
       copyShareLink.addEventListener('click', copyShareLinkToClipboard);
     }
 
-    // Share buttons
-    const shareWhatsApp = document.getElementById('shareWhatsApp');
-    const shareTelegram = document.getElementById('shareTelegram');
-    const shareEmail = document.getElementById('shareEmail');
-    
-    if (shareWhatsApp) {
-      shareWhatsApp.addEventListener('click', () => shareToWhatsApp());
-    }
-    
-    if (shareTelegram) {
-      shareTelegram.addEventListener('click', () => shareToTelegram());
-    }
-    
-    if (shareEmail) {
-      shareEmail.addEventListener('click', () => shareToEmail());
+    // Close modal when clicking outside
+    const modal = document.getElementById('share-modal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeShareModal();
+        }
+      });
     }
   }
 
   // Handle joining room
   async function handleJoinRoom() {
-    const nameInput = document.getElementById('nameInput');
-    const roomInput = document.getElementById('roomInput');
+    console.log('Attempting to join room...');
     
-    if (!nameInput || !roomInput) return;
+    const nameInput = document.getElementById('username');
+    const roomIdText = document.getElementById('room-id-text');
+    
+    if (!nameInput) {
+      showNotification('Username input not found', 'error');
+      return;
+    }
     
     const name = nameInput.value.trim();
-    const room = roomInput.value.trim();
     
     if (!name) {
       showNotification('Please enter your name', 'error');
@@ -157,14 +201,22 @@
       return;
     }
     
-    if (!room) {
-      showNotification('Please enter a room ID', 'error');
-      roomInput.focus();
-      return;
+    // Get room ID from display or prompt user
+    let currentRoomId = roomId;
+    if (!currentRoomId && roomIdText && roomIdText.textContent) {
+      currentRoomId = roomIdText.textContent;
+    }
+    
+    if (!currentRoomId) {
+      currentRoomId = prompt('Enter Room ID:');
+      if (!currentRoomId) {
+        showNotification('Room ID is required', 'error');
+        return;
+      }
     }
     
     uname = name;
-    roomId = room.toUpperCase();
+    roomId = currentRoomId.toUpperCase();
     
     try {
       const response = await fetch('/api/join', {
@@ -210,7 +262,7 @@
 
   // Show welcome message in chat
   function showWelcomeMessage() {
-    const messagesContainer = document.getElementById('messages');
+    const messagesContainer = document.getElementById('messages-area');
     if (!messagesContainer) return;
     
     const welcomeMessage = document.createElement('div');
@@ -257,7 +309,7 @@
 
   // Handle sending message
   async function handleSendMessage() {
-    const messageInput = document.getElementById('messageInput');
+    const messageInput = document.getElementById('message-input');
     if (!messageInput) return;
     
     const message = messageInput.value.trim();
@@ -324,8 +376,8 @@
 
   // Share modal functions
   function openShareModal() {
-    const modal = document.getElementById('shareModal');
-    const shareLink = document.getElementById('shareLinkInput');
+    const modal = document.getElementById('share-modal');
+    const shareLink = document.getElementById('modal-share-link');
     
     if (modal && shareLink) {
       const link = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
@@ -335,14 +387,14 @@
   }
 
   function closeShareModal() {
-    const modal = document.getElementById('shareModal');
+    const modal = document.getElementById('share-modal');
     if (modal) {
       modal.classList.remove('active');
     }
   }
 
   async function copyShareLinkToClipboard() {
-    const shareLink = document.getElementById('shareLinkInput');
+    const shareLink = document.getElementById('modal-share-link');
     if (shareLink) {
       try {
         await navigator.clipboard.writeText(shareLink.value);
@@ -353,28 +405,6 @@
         showNotification('Link copied to clipboard!', 'success');
       }
     }
-  }
-
-  function shareToWhatsApp() {
-    const link = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-    const text = `Join me in A2Z Chat! Room: ${roomId}`;
-    const url = `https://wa.me/?text=${encodeURIComponent(text + '\n' + link)}`;
-    window.open(url, '_blank');
-  }
-
-  function shareToTelegram() {
-    const link = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-    const text = `Join me in A2Z Chat! Room: ${roomId}`;
-    const url = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  }
-
-  function shareToEmail() {
-    const link = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-    const subject = `Join me in A2Z Chat - Room ${roomId}`;
-    const body = `Hi!\n\nI'd like to invite you to join me in A2Z Chat.\n\nRoom ID: ${roomId}\nDirect link: ${link}\n\nSee you there!`;
-    const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(url);
   }
 
   // Polling for messages
@@ -420,17 +450,19 @@
 
   // Update connection status
   function updateConnectionStatus(message, type) {
-    const chatStatus = document.querySelector('.chat-status');
-    if (chatStatus) {
-      const icon = type === 'success' ? 'fa-circle' : 'fa-exclamation-triangle';
-      const color = type === 'success' ? 'var(--online-green)' : 'var(--error-red)';
-      chatStatus.innerHTML = `<i class="fas ${icon} status-dot" style="color: ${color}"></i> ${message}`;
+    const statusText = document.getElementById('status-text');
+    if (statusText) {
+      statusText.textContent = message;
+      const statusIcon = statusText.parentElement.querySelector('.status-dot');
+      if (statusIcon) {
+        statusIcon.style.color = type === 'success' ? '#06d755' : '#ea4335';
+      }
     }
   }
 
   // Render messages
   function renderMessage(type, data) {
-    const messagesContainer = document.getElementById('messages');
+    const messagesContainer = document.getElementById('messages-area');
     if (!messagesContainer) return;
     
     const messageDiv = document.createElement('div');
@@ -469,7 +501,7 @@
 
   // Clear messages
   function clearMessages() {
-    const messagesContainer = document.getElementById('messages');
+    const messagesContainer = document.getElementById('messages-area');
     if (messagesContainer) {
       messagesContainer.innerHTML = '';
     }
@@ -477,7 +509,7 @@
 
   // Scroll to bottom
   function scrollToBottom() {
-    const messagesContainer = document.getElementById('messages');
+    const messagesContainer = document.getElementById('messages-area');
     if (messagesContainer) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
