@@ -4,65 +4,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ChatHive - Real-time chat application for instant messaging">
-    <meta name="keywords" content="chat, messaging, real-time, communication">
-    <title>ChatHive - Real-time Chat</title>
+    <meta name="description" content="A2Z Chat - Modern real-time messaging platform">
+    <meta name="keywords" content="chat, messaging, real-time, communication, A2Z">
+    <title>A2Z Chat - Connect Instantly</title>
     
     <!-- Preload critical resources -->
     <link rel="preload" href="style.css" as="style">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" as="style">
     
     <link rel="stylesheet" type="text/css" href="style.css">
     
-    <!-- Optimized font loading -->
+    <!-- Modern fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Favicon and PWA meta tags -->
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#00a884">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
 </head>
 
 <body>
     <div class="app">
-        <div class="screen join-screen active">
-            <div class="form">
-                <h1>Join ChatHive</h1>
-                <div class="form-input">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" maxlength="20" placeholder="Enter your username" autocomplete="username" required>
+        <!-- Welcome Screen -->
+        <div class="screen welcome-screen active">
+            <div class="welcome-container">
+                <div class="logo-section">
+                    <div class="main-logo">
+                        <i class="fas fa-comments"></i>
+                        <span class="logo-text">A2Z Chat</span>
+                    </div>
+                    <p class="tagline">Connect instantly, chat effortlessly</p>
                 </div>
-                <div class="form-input">
-                    <button id="join-user" type="button">Join Chat</button>
+                
+                <div class="welcome-illustration">
+                    <div class="chat-bubbles">
+                        <div class="bubble bubble-1">
+                            <i class="fas fa-heart"></i>
+                            <span>Hello!</span>
+                        </div>
+                        <div class="bubble bubble-2">
+                            <i class="fas fa-smile"></i>
+                            <span>How are you?</span>
+                        </div>
+                        <div class="bubble bubble-3">
+                            <i class="fas fa-thumbs-up"></i>
+                            <span>Great!</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="welcome-actions">
+                    <button id="create-room" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Create New Chat Room
+                    </button>
+                    <button id="join-existing" class="btn btn-secondary">
+                        <i class="fas fa-link"></i>
+                        Join with Link
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join Screen -->
+        <div class="screen join-screen">
+            <div class="join-container">
+                <div class="back-button">
+                    <button id="back-to-welcome" class="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+                
+                <div class="join-header">
+                    <div class="logo-mini">
+                        <i class="fas fa-comments"></i>
+                        <span>A2Z Chat</span>
+                    </div>
+                    <h2>Join the conversation</h2>
+                    <p>Enter your name to start chatting</p>
+                </div>
+                
+                <div class="join-form">
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" maxlength="20" placeholder="Your name" autocomplete="username" required>
+                        </div>
+                    </div>
+                    
+                    <div class="room-info" id="room-info" style="display: none;">
+                        <div class="room-id-display">
+                            <span class="label">Room ID:</span>
+                            <span id="room-id-text" class="room-id"></span>
+                            <button id="copy-room-id" class="btn-copy" title="Copy Room ID">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button id="join-chat" class="btn btn-primary btn-large">
+                        <i class="fas fa-rocket"></i>
+                        Start Chatting
+                    </button>
                 </div>
             </div>
         </div>
         
+        <!-- Chat Screen -->
         <div class="screen chat-screen">
-            <div class="header">
-                <div class="logo">ChatHive</div>
-                <button id="exit-chat" type="button" aria-label="Exit chat">Exit</button>
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <button id="back-to-join" class="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="chat-info">
+                        <div class="chat-title">
+                            <i class="fas fa-comments"></i>
+                            <span>A2Z Chat</span>
+                        </div>
+                        <div class="chat-status">
+                            <span id="online-status">
+                                <i class="fas fa-circle status-dot"></i>
+                                <span id="status-text">Connected</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-header-right">
+                    <button id="share-room" class="btn-icon" title="Share Room">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button id="chat-settings" class="btn-icon" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button id="exit-chat" class="btn-icon btn-exit" title="Leave Chat">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
             </div>
             
-            <div class="messages" role="log" aria-live="polite" aria-label="Chat messages">
-                <!-- Messages will be dynamically added here -->
+            <div class="messages-container">
+                <div class="messages" id="messages-area">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Welcome to A2Z Chat!</h3>
+                        <p>Start a conversation by sending a message below.</p>
+                        <div class="share-invite">
+                            <p>Invite others to join:</p>
+                            <div class="invite-link">
+                                <input type="text" id="share-link" readonly>
+                                <button id="copy-link" class="btn-copy-link">
+                                    <i class="fas fa-copy"></i>
+                                    Copy Link
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="typebox">
-                <input type="text" 
-                       id="message-input" 
-                       placeholder="Type a message..." 
-                       maxlength="500"
-                       autocomplete="off"
-                       aria-label="Message input">
-                <button id="send-message" type="button" aria-label="Send message">Send</button>
+            <div class="message-input-container">
+                <div class="message-input-wrapper">
+                    <button class="btn-attachment" title="Attach file">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <div class="input-wrapper">
+                        <input type="text" 
+                               id="message-input" 
+                               placeholder="Type a message..." 
+                               maxlength="1000"
+                               autocomplete="off">
+                        <button class="btn-emoji" title="Add emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                    </div>
+                    <button id="send-message" class="btn-send" title="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span class="typing-text">Someone is typing...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Share Modal -->
+        <div class="modal" id="share-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Share Chat Room</h3>
+                    <button class="modal-close" id="close-share-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Share this link with others to invite them to the chat:</p>
+                    <div class="share-options">
+                        <div class="share-link-container">
+                            <input type="text" id="modal-share-link" readonly>
+                            <button id="modal-copy-link" class="btn btn-primary">
+                                <i class="fas fa-copy"></i>
+                                Copy
+                            </button>
+                        </div>
+                        <div class="share-buttons">
+                            <button class="btn-share whatsapp" data-platform="whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp
+                            </button>
+                            <button class="btn-share telegram" data-platform="telegram">
+                                <i class="fab fa-telegram"></i>
+                                Telegram
+                            </button>
+                            <button class="btn-share email" data-platform="email">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
    
-    <!-- Load our custom JavaScript (no Socket.IO needed) -->
+    <!-- Load our custom JavaScript -->
     <script src="code.js"></script>
 </body>
 
